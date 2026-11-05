@@ -1,6 +1,6 @@
 {
   "name": "opencode-mutastic",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Mutation testing for Java, for opencode: the mutastic skill, and a gate that holds 'done' until the tests catch what the change does.",
   "type": "module",
   "main": "mutastic.js",

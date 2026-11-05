@@ -7,7 +7,7 @@
 //
 // Install: opencode plugin opencode-mutastic (add -g for every project).
 import { spawn } from "node:child_process"
-import { existsSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 
@@ -45,17 +45,24 @@ export const MutasticGate = async ({ client, worktree }) => {
   const tell = (message, variant = "info") =>
     client.tui.showToast({ body: { message, variant } }).catch(() => {})
 
+  // The mutastic skill, told to a gated session's agent with the gate's note. opencode reads skills
+  // from its own directories, not reliably from a plugin's, so it comes in the system prompt, and
+  // only where a task is gated.
+  const skill = (() => {
+    try {
+      const file = join(dirname(fileURLToPath(import.meta.url)), "skills", "mutastic", "SKILL.md")
+      return readFileSync(file, "utf8").replace(/^---[\s\S]*?---\s*/, "")
+    } catch {
+      return ""
+    }
+  })()
+
   const isSubtask = async (id) => {
     const session = await client.session.get({ path: { id } }).catch(() => null)
     return Boolean(session?.data?.parentID)
   }
 
   return {
-    // The mutastic skill comes with the plugin: its directory joins the skills opencode reads.
-    config: async (config) => {
-      const skills = join(dirname(fileURLToPath(import.meta.url)), "skills")
-      config.skills = { ...config.skills, paths: [...(config.skills?.paths ?? []), skills] }
-    },
     // Where the task starts, once a session, told to the agent in its next system prompt.
     "chat.message": async ({ sessionID }) => {
       stopped.delete(sessionID)
@@ -71,8 +78,10 @@ export const MutasticGate = async ({ client, worktree }) => {
       }
     },
     "experimental.chat.system.transform": async ({ sessionID }, output) => {
-      const note = sessionID && gated.get(sessionID)
+      if (!sessionID || !gated.has(sessionID)) return
+      const note = gated.get(sessionID)
       if (note) output.system.push(note)
+      if (skill) output.system.push(skill)
     },
     event: async ({ event }) => {
       if (event.type === "session.error" && event.properties.sessionID) {

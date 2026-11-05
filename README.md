@@ -61,23 +61,18 @@ then `/reload-plugins`. The [docs](https://docs.mutastic.io) have everything els
 
 ## mutastic for opencode
 
-The same gate and skill for [opencode](https://opencode.ai), as one plugin file. For one project:
+The same gate and skill for [opencode](https://opencode.ai), as the `opencode-mutastic` package:
 
 ```sh
-mkdir -p .opencode/plugins .opencode/skills/mutastic
-curl -fsSL https://raw.githubusercontent.com/tasticlabs/plugins/main/opencode/mutastic.js \
-  -o .opencode/plugins/mutastic.js
-curl -fsSL https://raw.githubusercontent.com/tasticlabs/plugins/main/plugins/mutastic/skills/mutastic/SKILL.md \
-  -o .opencode/skills/mutastic/SKILL.md
+opencode plugin opencode-mutastic        # for this project
+opencode plugin opencode-mutastic -g     # for every project
 ```
 
-or into `~/.config/opencode/plugins/` and `~/.config/opencode/skills/mutastic/` for every project.
-opencode also reads skills from `.claude/skills/`, so a project set up for Claude Code has the
-skill already. Restart opencode to load it.
+then restart opencode. `opencode plugin opencode-mutastic --force` updates it.
 
 opencode can't hold an agent's stop, so the gate works a little differently: when a session goes
 idle, the plugin runs `mutastic gate check`, and if the task isn't done, sends the cards back as
-the next prompt. After a few, it lets the agent stop and says what's left, in a toast. An idle
+the next prompt. When it passes, or the gate hands over to you, you see it in a toast. An idle
 after an error or your abort isn't checked, and nor are subagents' sessions. If you've set bash to
 `ask`, allow mutastic in `opencode.json`:
 

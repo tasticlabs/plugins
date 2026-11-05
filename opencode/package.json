@@ -1,0 +1,37 @@
+{
+  "name": "opencode-mutastic",
+  "version": "0.1.0",
+  "description": "Mutation testing for Java, for opencode: the mutastic skill, and a gate that holds 'done' until the tests catch what the change does.",
+  "type": "module",
+  "main": "mutastic.js",
+  "files": [
+    "mutastic.js",
+    "skills/",
+    "README.md"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "mutation-testing",
+    "java",
+    "mutastic"
+  ],
+  "homepage": "https://docs.mutastic.io/agents/other-agents/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tasticlabs/plugins.git",
+    "directory": "opencode"
+  },
+  "license": "Apache-2.0",
+  "scripts": {
+    "prepack": "mkdir -p skills/mutastic && cp ../plugins/mutastic/skills/mutastic/SKILL.md skills/mutastic/"
+  },
+  "peerDependencies": {
+    "@opencode-ai/plugin": ">=1.18"
+  },
+  "peerDependenciesMeta": {
+    "@opencode-ai/plugin": {
+      "optional": true
+    }
+  }
+}

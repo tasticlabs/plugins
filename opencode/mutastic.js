@@ -5,10 +5,11 @@
 // where the gate doesn't apply (not a git repository, no Java build, no mutastic) and never holds
 // the agent when mutastic can't run: a gate that can't check holds nothing.
 //
-// Install: copy this file to .opencode/plugins/ (one project) or ~/.config/opencode/plugins/.
+// Install: opencode plugin opencode-mutastic (add -g for every project).
 import { spawn } from "node:child_process"
 import { existsSync } from "node:fs"
-import { join } from "node:path"
+import { dirname, join } from "node:path"
+import { fileURLToPath } from "node:url"
 
 const BUILDS = ["pom.xml", "build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"]
 const INSTALL = "curl -fsSL https://mutastic.io/install.sh | sh"
@@ -50,6 +51,11 @@ export const MutasticGate = async ({ client, worktree }) => {
   }
 
   return {
+    // The mutastic skill comes with the plugin: its directory joins the skills opencode reads.
+    config: async (config) => {
+      const skills = join(dirname(fileURLToPath(import.meta.url)), "skills")
+      config.skills = { ...config.skills, paths: [...(config.skills?.paths ?? []), skills] }
+    },
     // Where the task starts, once a session, told to the agent in its next system prompt.
     "chat.message": async ({ sessionID }) => {
       stopped.delete(sessionID)

@@ -1,0 +1,4 @@
+# Copied from the Claude Code plugin when the package is built (prepack): one SKILL.md to edit.
+skills/
+node_modules/
+*.tgz

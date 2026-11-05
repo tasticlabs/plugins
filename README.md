@@ -1,11 +1,16 @@
 # tasticlabs plugins
 
-Claude Code plugins for the -tastic family of tools.
+Coding-agent plugins for the -tastic family of tools: Claude Code, and opencode.
 
 ```
 /plugin marketplace add tasticlabs/plugins
 /plugin install mutastic@tasticlabs
 ```
+
+In VS Code, the extension has no `/plugin`: run `claude plugin marketplace add tasticlabs/plugins`
+and `claude plugin install mutastic@tasticlabs` in a terminal, then reload the window. If your
+`~/.claude/settings.json` is read-only (Nix's home-manager, say), add `--scope project` to install it
+for the project instead.
 
 ## mutastic
 
@@ -53,6 +58,32 @@ Commit the proposals with the change, and a pull request's reviewer decides them
 ```
 
 then `/reload-plugins`. The [docs](https://docs.mutastic.io) have everything else about mutastic.
+
+## mutastic for opencode
+
+The same gate and skill for [opencode](https://opencode.ai), as one plugin file. For one project:
+
+```sh
+mkdir -p .opencode/plugins .opencode/skills/mutastic
+curl -fsSL https://raw.githubusercontent.com/tasticlabs/plugins/main/opencode/mutastic.js \
+  -o .opencode/plugins/mutastic.js
+curl -fsSL https://raw.githubusercontent.com/tasticlabs/plugins/main/plugins/mutastic/skills/mutastic/SKILL.md \
+  -o .opencode/skills/mutastic/SKILL.md
+```
+
+or into `~/.config/opencode/plugins/` and `~/.config/opencode/skills/mutastic/` for every project.
+opencode also reads skills from `.claude/skills/`, so a project set up for Claude Code has the
+skill already. Restart opencode to load it.
+
+opencode can't hold an agent's stop, so the gate works a little differently: when a session goes
+idle, the plugin runs `mutastic gate check`, and if the task isn't done, sends the cards back as
+the next prompt. After a few, it lets the agent stop and says what's left, in a toast. An idle
+after an error or your abort isn't checked, and nor are subagents' sessions. If you've set bash to
+`ask`, allow mutastic in `opencode.json`:
+
+```json
+{ "permission": { "bash": { "mutastic *": "allow" } } }
+```
 
 ## License
 

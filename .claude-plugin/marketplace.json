@@ -1,0 +1,17 @@
+{
+  "name": "tasticlabs",
+  "owner": {
+    "name": "tasticlabs",
+    "url": "https://github.com/tasticlabs"
+  },
+  "description": "Plugins for the -tastic family of tools: mutastic, and spectastic to come.",
+  "plugins": [
+    {
+      "name": "mutastic",
+      "source": "./plugins/mutastic",
+      "description": "Mutation testing for Java, for coding agents: the mutastic skill, and a gate in the agent's Stop hook that holds 'done' until the tests catch what the change does.",
+      "category": "testing",
+      "homepage": "https://mutastic.io"
+    }
+  ]
+}

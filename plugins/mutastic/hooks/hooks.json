@@ -1,0 +1,27 @@
+{
+  "description": "The mutastic gate: opened on the first prompt of a session, checked when Claude says it's done.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/gate open",
+            "timeout": 120
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/gate check",
+            "timeout": 600
+          }
+        ]
+      }
+    ]
+  }
+}

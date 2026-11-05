@@ -1,0 +1,50 @@
+#!/bin/sh
+# The mutastic gate, as Claude Code's hooks run it: `gate open` on a prompt, `gate check` when
+# Claude says it's done. The plugin is on in every project, so this stays out of the way where the
+# gate doesn't apply: not a git repository, no Java build, or no mutastic. Where it can't run, it
+# says so and never blocks: a gate that can't check holds nothing.
+#
+#   gate open|check     with the hook's input on stdin
+set -u
+
+action=${1:-}
+project=${CLAUDE_PROJECT_DIR:-$(pwd)}
+mutastic=${MUTASTIC:-mutastic}
+
+# A message for the person, from a Stop hook; nothing from a prompt's, where output is Claude's.
+say() {
+  if [ "$action" = check ]; then
+    printf '{"systemMessage": "%s"}\n' "$1"
+  fi
+  exit 0
+}
+
+case "$action" in
+  open | check) ;;
+  *) echo "usage: gate open|check" >&2 && exit 2 ;;
+esac
+
+# Only a Java build in git: elsewhere there's nothing to gate.
+git -C "$project" rev-parse --verify -q HEAD >/dev/null 2>&1 || exit 0
+[ -f "$project/pom.xml" ] || [ -f "$project/build.gradle" ] || [ -f "$project/build.gradle.kts" ] \
+  || [ -f "$project/settings.gradle" ] || [ -f "$project/settings.gradle.kts" ] || exit 0
+
+if ! command -v "$mutastic" >/dev/null 2>&1; then
+  if [ "$action" = open ]; then
+    echo "The mutastic plugin is on, but the mutastic command isn't installed, so this task isn't" \
+      "gated. To install it: curl -fsSL https://mutastic.io/install.sh | sh"
+  fi
+  say "mutastic gate: the mutastic command isn't installed, so nothing was checked. To install it: curl -fsSL https://mutastic.io/install.sh | sh"
+fi
+if ! "$mutastic" gate "$action" --help >/dev/null 2>&1; then
+  say "mutastic gate: this mutastic ($("$mutastic" --version 2>/dev/null)) has no gate: update it with curl -fsSL https://mutastic.io/install.sh | sh"
+fi
+
+# The hook's input is the command's too: it says which session this is.
+out=$("$mutastic" gate "$action" "$project" --hook=claude 2>/dev/null)
+status=$?
+if [ $status -ne 0 ]; then
+  say "mutastic gate: mutastic couldn't $action the gate here (exit $status), so nothing was checked. Run mutastic gate $action to see why."
+fi
+[ -n "$out" ] && printf '%s\n' "$out"
+exit 0

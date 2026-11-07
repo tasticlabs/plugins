@@ -10,7 +10,8 @@ mutant the tests miss is behaviour no test checks.
 
 The mutastic gate runs when you finish: it runs mutastic on the lines changed since the task
 started, and you can't end your turn while a mutant there is missed. Doing the loop yourself as
-you go is quicker than waiting for the gate to send you back.
+you go is quicker than waiting for the gate to send you back. Leave `mutastic gate check` to the
+gate: it runs it when you finish, so running it yourself only runs the same mutants twice.
 
 ## The loop
 

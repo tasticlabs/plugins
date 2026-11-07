@@ -69,9 +69,10 @@ codex plugin marketplace add tasticlabs/plugins
 codex plugin add mutastic@tasticlabs
 ```
 
-or `/plugins` inside Codex. Then start a new session and, in `/hooks`, trust mutastic's two hooks:
-Codex runs a plugin's hooks only once you have, and again after each update
-(`codex plugin marketplace upgrade tasticlabs`).
+or `/plugins` inside Codex. Then start a new session and, in `/hooks`, trust mutastic's two hooks,
+"mutastic gate: noting where the task starts" and "mutastic gate: checking the tests catch the
+mutants on the changed lines". Codex runs a plugin's hooks only once you have, and again after each
+update (`codex plugin marketplace upgrade tasticlabs`).
 
 Codex runs the agent's commands in a sandbox where a Gradle or Maven build can't reach its caches or
 the network. A plugin can't grant permissions, so to let Codex run mutastic, outside the sandbox and
@@ -81,7 +82,9 @@ without asking, add this to `~/.codex/rules/default.rules`:
 prefix_rule(pattern = ["mutastic"], decision = "allow")
 ```
 
-The gate itself isn't affected: Codex runs hooks outside the sandbox. The
+The build fails in the sandbox too, so Codex asks before each `./gradlew test`. If you'd rather it
+didn't, allow the build tool as well (`["./gradlew"]`, `["./mvnw"]` or `["mvn"]`), knowing that lets
+it run any build task outside the sandbox. The gate itself isn't affected: Codex runs hooks outside the sandbox. The
 [docs](https://docs.mutastic.io/agents/codex/) say more.
 
 ## mutastic for opencode

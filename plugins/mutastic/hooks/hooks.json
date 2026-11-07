@@ -1,5 +1,5 @@
 {
-  "description": "The mutastic gate: opened on the first prompt of a session, checked when Claude says it's done.",
+  "description": "The mutastic gate: opened on the first prompt of a session, checked when the agent says it's done.",
   "hooks": {
     "UserPromptSubmit": [
       {

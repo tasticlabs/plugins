@@ -1,6 +1,6 @@
 # tasticlabs plugins
 
-Coding-agent plugins for the -tastic family of tools: Claude Code, and opencode.
+Coding-agent plugins for the -tastic family of tools: Claude Code, Codex, and opencode.
 
 ```
 /plugin marketplace add tasticlabs/plugins
@@ -58,6 +58,31 @@ Commit the proposals with the change, and a pull request's reviewer decides them
 ```
 
 then `/reload-plugins`. The [docs](https://docs.mutastic.io) have everything else about mutastic.
+
+## mutastic for Codex
+
+The same plugin, skill and gate run in OpenAI's [Codex](https://developers.openai.com/codex), which
+reads this marketplace and runs the plugin's hooks as Claude Code does:
+
+```sh
+codex plugin marketplace add tasticlabs/plugins
+codex plugin add mutastic@tasticlabs
+```
+
+or `/plugins` inside Codex. Then start a new session and, in `/hooks`, trust mutastic's two hooks:
+Codex runs a plugin's hooks only once you have, and again after each update
+(`codex plugin marketplace upgrade tasticlabs`).
+
+Codex runs the agent's commands in a sandbox where a Gradle or Maven build can't reach its caches or
+the network. A plugin can't grant permissions, so to let Codex run mutastic, outside the sandbox and
+without asking, add this to `~/.codex/rules/default.rules`:
+
+```python
+prefix_rule(pattern = ["mutastic"], decision = "allow")
+```
+
+The gate itself isn't affected: Codex runs hooks outside the sandbox. The
+[docs](https://docs.mutastic.io/agents/codex/) say more.
 
 ## mutastic for opencode
 

@@ -1,0 +1,20 @@
+{
+  "name": "tasticlabs",
+  "interface": {
+    "displayName": "tasticlabs"
+  },
+  "plugins": [
+    {
+      "name": "mutastic",
+      "source": {
+        "source": "local",
+        "path": "./plugins/mutastic"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Coding"
+    }
+  ]
+}

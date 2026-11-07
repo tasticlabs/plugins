@@ -1,0 +1,25 @@
+{
+  "name": "mutastic",
+  "version": "0.2.0",
+  "description": "Mutation testing for Java, for coding agents: the mutastic skill, and a gate in the agent's Stop hook that holds 'done' until the tests catch what the change does.",
+  "author": {
+    "name": "tasticlabs",
+    "url": "https://github.com/tasticlabs"
+  },
+  "homepage": "https://mutastic.io",
+  "repository": "https://github.com/tasticlabs/plugins",
+  "license": "Apache-2.0",
+  "keywords": ["mutation-testing", "java", "testing", "gradle", "maven"],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
+  "interface": {
+    "displayName": "mutastic",
+    "shortDescription": "Check that the tests catch what a Java change does",
+    "longDescription": "mutastic plants small bugs in the lines a task changed and runs the tests against each. The mutastic skill teaches the loop: read each card, write the test it asks for, prove it with mutastic verify, and propose an ignore when a case can't happen. The gate holds 'done' until the tests catch what the change does, and hands over to you when the agent can't get there.",
+    "developerName": "tasticlabs",
+    "category": "Coding",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://mutastic.io",
+    "defaultPrompt": ["Check that my tests catch what this change does"]
+  }
+}

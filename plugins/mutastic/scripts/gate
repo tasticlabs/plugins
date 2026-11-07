@@ -1,6 +1,8 @@
 #!/bin/sh
-# The mutastic gate, as Claude Code's hooks run it: `gate open` on a prompt, `gate check` when
-# Claude says it's done. The plugin is on in every project, so this stays out of the way where the
+# The mutastic gate, as Claude Code's and Codex's hooks run it: `gate open` on a prompt, `gate check`
+# when the agent says it's done. Codex runs Claude Code's hooks as they are, with the same input and
+# answers, so one script serves both; Codex has no CLAUDE_PROJECT_DIR, but runs a hook in the
+# session's directory, which is the project. The plugin is on in every project, so this stays out of the way where the
 # gate doesn't apply: not a git repository, no Java build, or no mutastic. Where it can't run, it
 # says so and never blocks: a gate that can't check holds nothing.
 #
@@ -11,7 +13,7 @@ action=${1:-}
 project=${CLAUDE_PROJECT_DIR:-$(pwd)}
 mutastic=${MUTASTIC:-mutastic}
 
-# A message for the person, from a Stop hook; nothing from a prompt's, where output is Claude's.
+# A message for the person, from a Stop hook; nothing from a prompt's, where output is the agent's.
 say() {
   if [ "$action" = check ]; then
     printf '{"systemMessage": "%s"}\n' "$1"

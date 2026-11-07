@@ -10,6 +10,7 @@ opencode plugin opencode-mutastic        # for this project
 opencode plugin opencode-mutastic -g     # for every project
 ```
 
-It needs [mutastic](https://docs.mutastic.io/getting-started/install/) 0.5.0 or later, and a Java
-project in git built with Gradle or Maven; anywhere else it stays out of the way. The docs say
+It needs [mutastic](https://docs.mutastic.io/getting-started/install/) 0.5.0 or later, and a project
+in git that mutastic reads (today, Java built with Gradle or Maven); anywhere else it stays out of
+the way. The docs say
 more: [mutastic for opencode](https://docs.mutastic.io/agents/other-agents/).

@@ -2,8 +2,9 @@
 // `mutastic gate check` when the session goes idle. opencode can't hold an agent's stop, so a check
 // that isn't done sends the cards back as the next prompt; mutastic counts those, and after a few
 // lets the agent stop and says what's left. As in the Claude Code plugin, it stays out of the way
-// where the gate doesn't apply (not a git repository, no Java build, no mutastic) and never holds
-// the agent when mutastic can't run: a gate that can't check holds nothing.
+// where the gate doesn't apply (not a git repository, not a project mutastic reads, no mutastic)
+// and never holds the agent when mutastic can't run: a gate that can't check holds nothing.
+// mutastic decides what it reads, so a build it learns to read is gated with no change here.
 //
 // Install: opencode plugin opencode-mutastic (add -g for every project).
 import { spawn } from "node:child_process"
@@ -11,20 +12,27 @@ import { existsSync, readFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 
-const BUILDS = ["pom.xml", "build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"]
+// Where a missing mutastic is worth a word: a project it plainly reads. Elsewhere, nothing.
+const BUILDS = ["pom.xml", "build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts", "Cargo.toml"]
 const INSTALL = "curl -fsSL https://mutastic.io/install.sh | sh"
 
 /** What a command printed and how it exited; exit -1 when it couldn't start. */
 function run(command, args, cwd, input = "") {
   return new Promise((resolve) => {
     let out = ""
-    const child = spawn(command, args, { cwd, stdio: ["pipe", "pipe", "ignore"] })
+    let err = ""
+    const child = spawn(command, args, { cwd, stdio: ["pipe", "pipe", "pipe"] })
     child.stdout.on("data", (chunk) => (out += chunk))
-    child.on("error", () => resolve({ exit: -1, out: "" }))
-    child.on("close", (exit) => resolve({ exit: exit ?? -1, out: out.trim() }))
+    child.stderr.on("data", (chunk) => (err += chunk))
+    child.on("error", () => resolve({ exit: -1, out: "", err: "" }))
+    child.on("close", (exit) => resolve({ exit: exit ?? -1, out: out.trim(), err }))
     child.stdin.end(input)
   })
 }
+
+/** Whether mutastic said this isn't a project it reads: a mutastic from before the gate passed
+ * quietly there exits 2 and says the directory "isn't a ... build". */
+const notOurs = (answer) => answer.exit === 2 && /isn't a .* build/.test(answer.err)
 
 export const MutasticGate = async ({ client, worktree }) => {
   const project = worktree
@@ -34,9 +42,8 @@ export const MutasticGate = async ({ client, worktree }) => {
   const gated = new Map()
   const stopped = new Set()
 
-  const applies = async () =>
-    BUILDS.some((file) => existsSync(join(project, file))) &&
-    (await run("git", ["rev-parse", "--verify", "-q", "HEAD"], project)).exit === 0
+  const inGit = async () => (await run("git", ["rev-parse", "--verify", "-q", "HEAD"], project)).exit === 0
+  const plainlyABuild = () => BUILDS.some((file) => existsSync(join(project, file)))
 
   /** The gate's answer as a Claude Code hook gives it, which says the session it's for. */
   const gate = (action, sessionID) =>
@@ -66,13 +73,19 @@ export const MutasticGate = async ({ client, worktree }) => {
     // Where the task starts, once a session, told to the agent in its next system prompt.
     "chat.message": async ({ sessionID }) => {
       stopped.delete(sessionID)
-      if (!(await applies())) return
+      if (!(await inGit())) return
       const opened = await gate("open", sessionID)
       if (opened.exit === 0) {
-        // Empty once the session's open: keep what it said the first time.
-        gated.set(sessionID, opened.out || gated.get(sessionID) || "")
+        // Empty once the session's open: keep what it said the first time. Empty with nothing kept
+        // is mutastic reading no build here, so nothing's gated.
+        const note = opened.out || gated.get(sessionID)
+        if (note) gated.set(sessionID, note)
       } else if (opened.exit === -1) {
-        await tell(`mutastic isn't installed, so this task isn't gated. To install it: ${INSTALL}`, "warning")
+        if (plainlyABuild()) {
+          await tell(`mutastic isn't installed, so this task isn't gated. To install it: ${INSTALL}`, "warning")
+        }
+      } else if (notOurs(opened)) {
+        return
       } else {
         await tell(`This mutastic has no gate, so this task isn't gated: update it with ${INSTALL}`, "warning")
       }

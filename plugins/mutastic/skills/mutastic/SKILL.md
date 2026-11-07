@@ -1,6 +1,6 @@
 ---
 name: mutastic
-description: Check that the tests catch what a Java code change does, with mutastic. Use after changing Java code under src/main, before saying the work is done, and whenever the mutastic gate sends you back with missed mutants.
+description: Check that the tests catch what a code change does, with mutastic. Use after changing a project's code (not its tests) in a project mutastic reads, before saying the work is done, and whenever the mutastic gate sends you back with missed mutants.
 ---
 
 # Testing a change with mutastic

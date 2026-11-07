@@ -1,6 +1,6 @@
 {
   "name": "mutastic",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Mutation testing for Java, for coding agents: the mutastic skill, and a gate in the agent's Stop hook that holds 'done' until the tests catch what the change does.",
   "author": {
     "name": "tasticlabs",

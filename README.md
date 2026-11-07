@@ -30,8 +30,8 @@ tests Claude writes are checked while it's still in the code, not later in CI or
 
 - **mutastic itself**, with `mutastic gate`: `curl -fsSL https://mutastic.io/install.sh | sh`. The
   plugin tells you, and Claude, if it's missing or too old.
-- **A Java project in git**, built with Gradle or Maven, and a JDK. Anywhere else, the plugin stays
-  out of the way.
+- **A project in git that mutastic reads:** today, Java built with Gradle or Maven, with a JDK.
+  mutastic decides which projects it reads, so the plugin stays out of the way anywhere else.
 - **Permission for Claude to run mutastic.** A plugin can't grant it, so add it to the project's
   `.claude/settings.json`, or your own:
 

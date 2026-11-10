@@ -6,20 +6,19 @@ is what people read before installing, so a change to what a plugin does changes
 
 ## Commit messages
 
-Commits follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) and 50/72:
-a subject of at most 50 characters, a blank line, then a body wrapped at 72 that says why. The
-diff already says what.
+Commit messages follow [Conventional Commits](https://www.conventionalcommits.org) and 50/72: a
+`type(scope): subject` of at most 50 characters, imperative and lower case, a blank line, then a
+body wrapped at 72 that explains why: what was wrong or missing, and what the change does about it.
 
-- **Subject:** `type(scope): summary`, in the imperative ("add", not "adds" or "added"), lower
-  case after the colon unless it starts with a name, and with no full stop.
+- **Subject:** no full stop at the end. Imperative means "add", not "adds" or "added".
 - **Type:** `feat`, `fix`, `docs`, `test`, `refactor`, `perf`, `build`, `ci`, `chore` or
   `revert`. A breaking change adds `!` before the colon (`feat(cli)!: …`), or a
   `BREAKING CHANGE:` footer.
 - **Scope:** optional and lower case, the part changed: `skill` (the mutastic skill), `propose` (the
   mutastic-propose skill), `gate`, `codex`, `opencode` or `marketplace`. Leave it out when a change
   spans several.
-- **Body:** what was wrong or missing, and what the change does about it. URLs, indented or
-  fenced code, and trailers such as `Co-Authored-By:` (last) may run past 72.
+- **Long lines:** URLs, indented or fenced code, and trailers such as `Co-Authored-By:` (last)
+  may run past 72.
 
 Two from the log, as they'd be written now:
 

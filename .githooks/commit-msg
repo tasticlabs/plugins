@@ -3,7 +3,7 @@
 # Git runs it as the commit-msg hook (`git config core.hooksPath .githooks`), and CI runs it on
 # each new commit through check-commits. POSIX sh and awk only, so it runs anywhere git does.
 #
-#   type(scope)!: summary     at most 50 characters, no full stop at the end
+#   type(scope)!: subject     at most 50 characters, lower case, no full stop at the end
 #   (blank line)
 #   body                      lines of at most 72 characters, saying why
 #
@@ -39,11 +39,12 @@ END {
     if (s ~ /^[a-z]+(\([^)]*\))?!?: /) {
       t = s; sub(/[(!:].*/, "", t)
       if (t !~ "^(" types ")$") fail("unknown type \"" t "\": use one of " types)
-      else fail("the subject needs \"type(scope): summary\", with a lower-case scope and one space after the colon")
+      else fail("the subject needs \"type(scope): subject\", with a lower-case scope and one space after the colon")
     } else {
-      fail("the subject needs \"type(scope): summary\", e.g. \"fix(cli): keep the exit status\"")
+      fail("the subject needs \"type(scope): subject\", e.g. \"fix(cli): keep the exit status\"")
     }
   }
+  if (s ~ /^[a-z]+(\([^)]*\))?!?: [A-Z]/) fail("the subject starts with a capital after the colon; use lower case")
   if (chars(s) > 50) fail("the subject is " chars(s) " characters; keep it to 50")
   if (s ~ /\.$/) fail("the subject ends with a full stop; drop it")
   if (n >= 2 && line[2] != "") fail("line 2 must be blank, between the subject and the body")

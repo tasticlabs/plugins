@@ -24,13 +24,18 @@ gate: it runs it when you finish, so running it yourself only runs the same muta
 3. Run the card's `mutastic verify ID...`. It passes only when the test catches each mutant. Don't
    move on until it does.
 4. When a mutant's case can't happen in practice, or no caller can see the change, don't contrive
-   a test. Propose ignoring it, with why, and a person will decide:
+   a test. Propose ignoring it, and a person will decide. The reason is two sentences: the one
+   case where the mutant differs, and why that can't happen, in terms a reviewer can check in the
+   code:
 
    ```sh
-   mutastic ignore m90db0c4e --propose --as=unreachable --reason="balances are capped by the ledger"
+   mutastic ignore m90db0c4e --propose --as=unreachable --reason="Differs only when balance is below -1000. That can't happen because the ledger caps overdrafts at 1000."
    ```
 
-   The kinds are `equivalent`, `unreachable`, `telemetry`, `deprecated` and `accepted-risk`. A
+   If you can't finish the second sentence with something the code shows, the case can happen:
+   write the test. The kinds are `equivalent`, `unreachable`, `telemetry`, `deprecated` and
+   `accepted-risk`; an `equivalent` or `unreachable` proposal without a "because" is refused. A
+   mutant no test reaches is listed with its id under "not covered", with the same command. A
    proposed mutant still counts as missed until a person accepts it, but it doesn't hold the gate.
 
 ## Rules

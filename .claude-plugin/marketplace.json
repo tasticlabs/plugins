@@ -9,7 +9,7 @@
     {
       "name": "mutastic",
       "source": "./plugins/mutastic",
-      "description": "Mutation testing for Java, for coding agents: the mutastic skill, and a gate in the agent's Stop hook that holds 'done' until the tests catch what the change does.",
+      "description": "Mutation testing for Java and Rust, for coding agents: the mutastic skill, and a gate in the agent's Stop hook that holds 'done' until the tests catch what the change does.",
       "category": "testing",
       "homepage": "https://mutastic.io"
     }

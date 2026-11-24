@@ -4,6 +4,19 @@ Thanks for helping. Bug reports, ideas and pull requests are all welcome: open a
 [issue](https://github.com/tasticlabs/plugins/issues) or a pull request. The [README](README.md)
 is what people read before installing, so a change to what a plugin does changes it too.
 
+## Commands
+
+```sh
+just setup              # once in a clone: the commit hook
+just bump 0.4.0         # the mutastic plugin's version, in its Claude Code and Codex manifests
+just pack               # opencode/'s package as npm would publish it, to look inside
+just merge 59 body.txt  # .githooks/merge-pr, below
+```
+
+`just` lists them all, each one word, as in mutastic's two editions. Install just 1.59.0 or later
+with `brew install just`, or see [its packages](https://just.systems/man/en/packages.html).
+Publishing `opencode-mutastic` to npm is done by hand, by its maintainer.
+
 ## Commit messages
 
 Commit messages follow [Conventional Commits](https://www.conventionalcommits.org) and 50/72: a
